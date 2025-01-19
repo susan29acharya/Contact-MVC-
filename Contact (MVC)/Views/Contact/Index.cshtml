@@ -1,0 +1,120 @@
+﻿@{
+    Layout = null;
+}
+<link href="~/css/contactindex.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+<div class="Maindiv">
+
+
+    <div class="containers">
+
+        <h3>Contact</h3>
+        <div id="DivErrorView" style="display:none;"></div>
+        <input type="text" placeholder="Enter the Name" id="Name" />
+        <input type="number" placeholder="Enter the Number" id="Number" />
+        <div class="btn1">
+            <input type="button" value="Add" onclick="AddContact();" />
+            <div />
+
+            <div class="listofcontact" id="Listsofcontacts">
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        fetchingContacts();
+    })
+    function AddContact() {
+        var AddedNumber = $("#Number").val();
+        var AddedName = $("#Name").val();
+
+        if (AddedNumber == '' && AddedName == '') {
+            document.getElementById('DivErrorView').style.display = 'block';
+            $("#DivErrorView").html('<div class="alert alert-danger ">All field is mandatory.</div>');
+            // $("#DivErrorView").show();
+            $('#DivErrorView').delay(2000).slideUp();
+            return;
+        }
+        $.ajax({
+            url: '@Url.Action("AddContact", "Contact")',
+            type: 'POST',
+            data: {
+                ContactNumber: AddedNumber,
+                ContactName: AddedName
+
+            },
+            success: function (response) {
+                if (response != null) {
+                    document.getElementById('DivErrorView').style.display = 'block';
+                    $("#DivErrorView").html('<div class="alert alert-success ">Contact added successfully.</div>');
+                    // $("#DivErrorView").show();
+                    $('#DivErrorView').delay(2000).slideUp();
+                    $("#Number").val('');
+                    $("#Name").val('');
+                    fetchingContacts();
+                }
+                else {
+                    document.getElementById('DivErrorView').style.display = 'block';
+                    $("#DivErrorView").html('<div class="alert alert-danger ">Adding contact failed.</div>');
+                    // $("#DivErrorView").show();
+                    $('#DivErrorView').delay(2000).slideUp();
+                    $("#Number").val('');
+                    $("#Name").val('');
+                }
+            },
+            error: function (xhr, error, status) {
+                alert("error---")
+            }
+
+        })
+    }
+    function fetchingContacts() {
+        $.ajax({
+            url: '@Url.Action("FetchingContact", "Contact")',
+            type: 'GET',
+            dataType: 'json',
+
+            success: function (response) {
+                var ContactData = '';
+                if (response) {
+                    for (var i = 0; i < response.length; i++) {
+                        ContactData += `
+                                                <div class="ContactMaindiv" onclick="ShowContactNumberDiv(${response[i].contactId});">
+                                             <div class="ContactName" >
+                                                <h4>${response[i].contactName}<h4/>
+                                             </div>
+                                                 <div class="ContactNumber"   id="ContactNumber${response[i].contactId}">
+                                                     <h4>${response[i].contactNumber}<h4/> 
+                                                 </div>
+                                             </div>`;
+                    }
+                    $("#Listsofcontacts").html(ContactData);
+                }
+
+            },
+            error: function (xhr, error, status) {
+                alert("error---")
+            }
+        })
+    }
+    var clicks = 0;
+    function ShowContactNumberDiv(contactId){
+       
+        if (clicks == 0) {
+            clicks = 1;
+            document.getElementById('ContactNumber'+contactId).style.display = 'block';
+        }
+        else {
+            clicks = 0;
+            document.getElementById('ContactNumber' + contactId).style.display = 'none';
+        }
+    }
+</script>
