@@ -65,5 +65,22 @@ namespace Contact__MVC_.services
                 return ContactList;
             };
         }
+        public bool DeleteContact(ContactData contact)
+        {
+            using(SqlConnection conn = new SqlConnection(constring()))
+            {
+                SqlCommand cmd = new SqlCommand("SP_Contact", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@ContactId", contact.ContactId);
+                cmd.Parameters.AddWithValue("@flag", "DeleteContact");
+
+                conn.Open();
+                int res = cmd.ExecuteNonQuery();
+                conn.Close();
+
+                return res > 0;
+
+            }
+        }
     }
 }

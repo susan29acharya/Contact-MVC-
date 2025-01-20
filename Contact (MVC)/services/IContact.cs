@@ -6,8 +6,8 @@ namespace Contact__MVC_.services
     {
         string constring();
         bool AddContact(ContactData contact);
-
         List<ContactData> GetContacts();
+        bool DeleteContact(ContactData contact);
 
     }
 }

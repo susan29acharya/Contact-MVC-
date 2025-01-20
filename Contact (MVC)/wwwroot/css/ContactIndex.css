@@ -10,6 +10,7 @@
     margin-top:10vh;
     border-radius: 10px;
     box-shadow: 1px 1px 5px #d5d8dc;
+    overflow-y:hidden;
 }
 .containers h3 {
     text-align: center;
@@ -51,7 +52,7 @@
     cursor:pointer;
 }
 .listofcontact {
-    height: 35vh;
+    height: 38vh;
     width: 188%;
     margin-top: 5%;
     margin-left: -44.5%;
@@ -82,7 +83,7 @@
     width: 100%;
     border-radius: 10px;
     margin-bottom: 5%;
-    border: 1px solid #f9004d;
+    border: 0.1px solid gray;
     background-color:white;
 }
 .ContactMaindiv:hover{
@@ -98,8 +99,9 @@
     letter-spacing: 1px;
     text-transform: capitalize;
 }
-.ContactName h4{
+.ContactName h4 {
     font-size: 22px;
+    color: #607d8b;
 }
 .ContactNumber h4{
     font-size:19px;
@@ -111,27 +113,45 @@
     font-size: 15px;
     border-bottom-right-radius: 10px;
     border-bottom-left-radius: 10px;
-    border-top: 1px solid black;
-    position:relative;
-    z-index:1;
-
+    border-top: 1px solid #d5d8dc;
+    position: relative;
+    z-index: 1;
 }
 .numberh4{
     height:7.5vh;
-    width:45%;
+    width:55%;
     display:flex;
     justify-content:center;
     align-items:center;
 }
+.numberh4 h4{
+    font-size:16.5px;
+}
 .delete {
     height: 7.5vh;
-    width: 55%;
+    width: 45%;
     position:absolute;
     z-index:-1;
-    margin-left:45%;
+    margin-left:55%;
     margin-top:-16.5%;
     display:flex;
-    justify-content:space-evenly;
     align-items:center;
-
+}
+.delete a{
+    height:5vh;
+    width:45%;
+    border-radius:7px;
+    margin-left:3%;
+    list-style:none;
+    text-decoration:none;
+    text-transform:capitalize;
+    letter-spacing:1px;
+    font-size:14px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:white;
+}
+.delete a:hover{
+    color:white;
 }

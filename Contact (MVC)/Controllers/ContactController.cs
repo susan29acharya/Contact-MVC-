@@ -27,6 +27,12 @@ namespace Contact__MVC_.Controllers
             var response = _Contacts.GetContacts();
             return Json(response);
         }
+        [HttpPost]
+        public IActionResult DeleteContact(ContactData contact)
+        {
+            var response = _Contacts.DeleteContact(contact);
+            return Json(response);
+        }
 
     }
 }

@@ -5,8 +5,6 @@
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
 <div class="Maindiv">
-
-
     <div class="containers">
 
         <h3>Contact</h3>
@@ -25,22 +23,54 @@
     </div>
 </div>
 
+<div class="modal" tabindex="-1" role="dialog" id="DeleteContactModal">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Deletion</h5>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure want to delete this Contact?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" onclick="DeleteContact();">Delete</button>
+                <button type="button" class="btn btn-secondary" onclick="HideModal()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+    var clicks = 0;
+    var contactId;
     $(document).ready(function () {
         fetchingContacts();
     })
     function AddContact() {
         var AddedNumber = $("#Number").val();
         var AddedName = $("#Name").val();
+        debugger;
 
-        if (AddedNumber == '' && AddedName == '') {
+        if (AddedNumber.length > 10) {
+            document.getElementById('DivErrorView').style.display = 'block';
+            $("#DivErrorView").html('<div class="alert alert-danger ">Number cannot be more than 10 digits.</div>');
+            $("#DivErrorView").show();
+            $('#DivErrorView').delay(2000).slideUp();
+            $("#Number").val('');
+            $("#Name").val('');
+            return;
+        }
+
+        if (AddedNumber == "" || AddedName == "") {
             document.getElementById('DivErrorView').style.display = 'block';
             $("#DivErrorView").html('<div class="alert alert-danger ">All field is mandatory.</div>');
-            // $("#DivErrorView").show();
+            $("#DivErrorView").show();
             $('#DivErrorView').delay(2000).slideUp();
+            $("#Number").val('');
+            $("#Name").val('');
             return;
         }
         $.ajax({
@@ -87,20 +117,20 @@
                 if (response) {
                     for (var i = 0; i < response.length; i++) {
                         ContactData += `
-                                                <div class="ContactMaindiv" onclick="ShowContactNumberDiv(${response[i].contactId});">
-                                             <div class="ContactName" >
-                                                <h4>${response[i].contactName}<h4/>
-                                             </div>
-                                                 <div class="ContactNumber"   id="ContactNumber${response[i].contactId}">
-                                                 <div class="numberh4">
-                                                     <h4>${response[i].contactNumber}<h4/>
-                                                 </div>
-                                                 <div class="delete">
-                                                         <a href="#" class="btn btn-primary">update</a> <a href="#" class="btn btn-danger">delete</a>
-                                                 </div>
-                                                     
-                                                 </div>
-                                             </div>`;
+                                      <div class="ContactMaindiv" onclick="ShowContactNumberDiv(${response[i].contactId});">
+                                        <div class="ContactName" >
+                                          <h4>${response[i].contactName}<h4/>
+                                        </div>
+                                       <div class="ContactNumber"   id="ContactNumber${response[i].contactId}">
+                                         <div class="numberh4">
+                                           <h4>+977-${response[i].contactNumber}<h4/>
+                                         </div>
+                                       <div class="delete">
+                                         <a href="#" style="background-color:#0288d1;">Edit</a>
+                                         <a onClick="ShowDeleteModal(${response[i].contactId})" style="background-color:#d32f2f;color:white;">Delete</a>
+                                        </div>                                          
+                                       </div>
+                                      </div>`;
                     }
                     $("#Listsofcontacts").html(ContactData);
                 }
@@ -111,7 +141,6 @@
             }
         })
     }
-    var clicks = 0;
     function ShowContactNumberDiv(contactId){
        
         if (clicks == 0) {
@@ -122,5 +151,42 @@
             clicks = 0;
             document.getElementById('ContactNumber' + contactId).style.display = 'none';
         }
+    }
+    function ShowDeleteModal(ContactId) {
+        contactId = ContactId;
+        $("#DeleteContactModal").modal('show');
+    }
+    function HideModal(){
+        $("#DeleteContactModal").modal('hide');
+    }
+    function DeleteContact() {
+        $.ajax({
+            url: '@Url.Action("DeleteContact", "Contact")',
+            type:'POST',
+            data: {
+                ContactId: contactId
+            },
+            success: function (response) {
+                debugger;
+                if (response) {
+                    document.getElementById('DivErrorView').style.display = 'block';
+                    $("#DivErrorView").html('<div class="alert alert-success ">Contact Deleted Successfully</div>');
+                    $("#DivErrorView").show();
+                    $('#DivErrorView').delay(2000).slideUp();   
+                    HideModal();
+                    fetchingContacts();
+                }
+                else
+                {
+                    document.getElementById('DivErrorView').style.display = 'block';
+                    $("#DivErrorView").html('<div class="alert alert-danger ">Unable to Delete Contact</div>');
+                    $("#DivErrorView").show();
+                    $('#DivErrorView').delay(2000).slideUp();
+                }
+            },
+            error:function(xhr,error,status){
+                alert("error")
+            }
+        })
     }
 </script>
