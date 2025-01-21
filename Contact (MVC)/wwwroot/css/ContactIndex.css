@@ -29,6 +29,7 @@
     padding: 0px 7px 0px 7px;
     font-size: 17px;
     background-color: #f2f3f4;
+    letter-spacing:2px;
 }
 .btn1{
     height:6vh;
@@ -95,13 +96,32 @@
     padding: 1px;
     border-radius: 10px;
     padding-left: 10px;
+    padding-right: 5px;
     padding-top: 7px;
     letter-spacing: 1px;
     text-transform: capitalize;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 .ContactName h4 {
     font-size: 22px;
     color: #607d8b;
+}
+.ContactName button {
+    height: 5vh;
+    width: 100%;
+    border: 1px solid #f9004d;
+    border-radius: 10px;
+    background-color: white;
+    color: #424242;
+    font-size: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    letter-spacing: 1px;
+    font-weight: 450;
+    transition: 0.5s ease;
 }
 .ContactNumber h4{
     font-size:19px;
@@ -124,18 +144,21 @@
     justify-content:center;
     align-items:center;
 }
-.numberh4 h4{
-    font-size:16.5px;
+.numberh4 h4 {
+    font-size: 16.5px;
+    color: #37474f;
+    letter-spacing: 1px;
 }
 .delete {
-    height: 7.5vh;
+    height: 6vh;
     width: 45%;
     position:absolute;
     z-index:-1;
     margin-left:55%;
-    margin-top:-16.5%;
+    margin-top:-15%;
     display:flex;
     align-items:center;
+    border-left:1px solid gray;
 }
 .delete a{
     height:5vh;

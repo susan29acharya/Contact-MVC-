@@ -33,6 +33,29 @@ namespace Contact__MVC_.Controllers
             var response = _Contacts.DeleteContact(contact);
             return Json(response);
         }
+        [HttpGet]
+        public IActionResult GetContactById(ContactData contact)
+        {
+            var response = _Contacts.GetContactById(contact);
+            return Json(response);
+        }
+        [HttpPost]
+        public IActionResult UpdateContact(ContactData contact)
+        {
+            var response = _Contacts.UpdateContact(contact);
+            return Json(response);
+        }
+        [HttpPost]
+        public IActionResult UploadImage(ContactData contact)
+        {
+            var response = _Contacts.UploadImage(contact);
+            return Json(response);
+        }
+        public IActionResult Imagefetched(ContactData contact)
+        {
+            var response = _Contacts.Imagefetched(contact);
+            return Json(response);
+        }
 
     }
 }

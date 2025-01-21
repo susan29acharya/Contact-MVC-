@@ -9,10 +9,11 @@
 
         <h3>Contact</h3>
         <div id="DivErrorView" style="display:none;"></div>
-        <input type="text" placeholder="Enter the Name" id="Name" />
+        <input type="text" placeholder="Enter the Name" id="Name"  />
         <input type="number" placeholder="Enter the Number" id="Number" />
         <div class="btn1">
-            <input type="button" value="Add" onclick="AddContact();" />
+            <input type="button" id="addbtn" value="Add" onclick="AddContact();" />
+            <input type="button" id="Updatebtn" style="display:none;" value="Update" onclick="UpdateContact();" />
             <div />
 
             <div class="listofcontact" id="Listsofcontacts">
@@ -23,6 +24,7 @@
     </div>
 </div>
 
+@*  delete modal *@
 <div class="modal" tabindex="-1" role="dialog" id="DeleteContactModal">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -35,6 +37,40 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" onclick="DeleteContact();">Delete</button>
                 <button type="button" class="btn btn-secondary" onclick="HideModal()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+@* edit modal *@
+<div class="modal" tabindex="-1" role="dialog" id="EditContactModal">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Confirmation</h5>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to edit this product?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-warning" id="confirmEdit" onclick="EditContact();">Confirm Edit</button>
+            </div>
+        </div>
+    </div>
+</div>
+@* photo input modal *@
+<div class="modal" tabindex="-1" role="dialog" id="UploadPhototModal">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Upload Image</h5>
+            </div>
+            <div class="modal-body">
+                <input class="form-control w-75" type="file" id="formFile">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" onclick="UploadImage();">Upload</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -117,20 +153,22 @@
                 if (response) {
                     for (var i = 0; i < response.length; i++) {
                         ContactData += `
-                                      <div class="ContactMaindiv" onclick="ShowContactNumberDiv(${response[i].contactId});">
-                                        <div class="ContactName" >
-                                          <h4>${response[i].contactName}<h4/>
-                                        </div>
-                                       <div class="ContactNumber"   id="ContactNumber${response[i].contactId}">
-                                         <div class="numberh4">
-                                           <h4>+977-${response[i].contactNumber}<h4/>
+                                       <div class="ContactMaindiv" onclick="ShowContactNumberDiv(${response[i].contactId});">
+                                         <div class="ContactName" >
+                                         <h4>${response[i].contactName}<h4/>
+                                              <button type="button" class="btn btn-secondary" onClick="showUploadModal(${response[i].contactId});" >Photo</button>
+                                             
                                          </div>
-                                       <div class="delete">
-                                         <a href="#" style="background-color:#0288d1;">Edit</a>
-                                         <a onClick="ShowDeleteModal(${response[i].contactId})" style="background-color:#d32f2f;color:white;">Delete</a>
-                                        </div>                                          
-                                       </div>
-                                      </div>`;
+                                        <div class="ContactNumber"   id="ContactNumber${response[i].contactId}">
+                                          <div class="numberh4">
+                                            <h4>+977-${response[i].contactNumber}<h4/>
+                                          </div>
+                                        <div class="delete">
+                                          <a onClick="ShowEditModal(${response[i].contactId})" style="background-color:#0288d1;color:white;">Edit</a>
+                                          <a onClick="ShowDeleteModal(${response[i].contactId})" style="background-color:#d32f2f;color:white;">Delete</a>
+                                         </div>
+                                        </div>
+                                       </div>`;
                     }
                     $("#Listsofcontacts").html(ContactData);
                 }
@@ -141,11 +179,11 @@
             }
         })
     }
-    function ShowContactNumberDiv(contactId){
-       
+    function ShowContactNumberDiv(contactId) {
+
         if (clicks == 0) {
             clicks = 1;
-            document.getElementById('ContactNumber'+contactId).style.display = 'block';
+            document.getElementById('ContactNumber' + contactId).style.display = 'block';
         }
         else {
             clicks = 0;
@@ -156,13 +194,13 @@
         contactId = ContactId;
         $("#DeleteContactModal").modal('show');
     }
-    function HideModal(){
+    function HideModal() {
         $("#DeleteContactModal").modal('hide');
     }
     function DeleteContact() {
         $.ajax({
             url: '@Url.Action("DeleteContact", "Contact")',
-            type:'POST',
+            type: 'POST',
             data: {
                 ContactId: contactId
             },
@@ -172,20 +210,158 @@
                     document.getElementById('DivErrorView').style.display = 'block';
                     $("#DivErrorView").html('<div class="alert alert-success ">Contact Deleted Successfully</div>');
                     $("#DivErrorView").show();
-                    $('#DivErrorView').delay(2000).slideUp();   
+                    $('#DivErrorView').delay(2000).slideUp();
                     HideModal();
                     fetchingContacts();
                 }
-                else
-                {
+                else {
                     document.getElementById('DivErrorView').style.display = 'block';
                     $("#DivErrorView").html('<div class="alert alert-danger ">Unable to Delete Contact</div>');
                     $("#DivErrorView").show();
                     $('#DivErrorView').delay(2000).slideUp();
                 }
             },
-            error:function(xhr,error,status){
+            error: function (xhr, error, status) {
                 alert("error")
+            }
+        })
+    }
+    function ShowEditModal(ContactId) {
+        contactId = ContactId
+        $("#EditContactModal").modal('show');
+    }
+    function HideEditModal() {
+        $("#EditContactModal").modal('hide');
+    }
+    function EditContact() {
+        $.ajax({
+            url: '@Url.Action("GetContactById", "Contact")',
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                ContactId: contactId
+            },
+            success: function (response) {
+                if (response) {
+                    for (var i = 0; i < response.length; i++) {
+                        var ContactName = response[i].contactName;
+                        var ContactNumber = response[i].contactNumber;
+                   
+                    }
+                    $("#Name").val(ContactName);
+                    $("#Number").val(ContactNumber);
+                    HideEditModal();
+                    document.getElementById('addbtn').style.display = 'none';
+                    document.getElementById('Updatebtn').style.display = 'block';
+                }
+                else {
+                    alert("unable to fetch data")
+                }
+            },
+            error: function (xhr, error, status) {
+                alert("Error--")
+            }
+        })
+    }
+    function UpdateContact() {
+        var updatedName = document.getElementById('Name').value;
+        var updatedNumber = document.getElementById('Number').value;
+
+        if(updatedName == '' || updatedNumber==''){
+            document.getElementById('DivErrorView').style.display = 'block';
+            $("#DivErrorView").html('<div class="alert alert-danger ">Field cannot be empty</div>');
+            $("#DivErrorView").show();
+            $('#DivErrorView').delay(2000).slideUp();
+            return;
+        }
+
+        $.ajax({
+            url: '@Url.Action("UpdateContact", "Contact")',
+            type:'POST',
+            data: {
+                ContactId: contactId,
+                ContactName: updatedName,
+                ContactNumber: updatedNumber
+            },
+            success: function (response) {
+                if (response) {
+                    document.getElementById('DivErrorView').style.display = 'block';
+                    $("#DivErrorView").html('<div class="alert alert-success ">Contact Updated successfully</div>');
+                    $("#DivErrorView").show();
+                    $('#DivErrorView').delay(2000).slideUp();
+                    $("#Number").val('');
+                    $("#Name").val('');
+                    fetchingContacts();
+                    document.getElementById('addbtn').style.display = 'block';
+                    document.getElementById('Updatebtn').style.display = 'none';
+                    return;
+                }
+                else {
+                    document.getElementById('DivErrorView').style.display = 'block';
+                    $("#DivErrorView").html('<div class="alert alert-danger ">Unable to update the contact</div>');
+                    $("#DivErrorView").show();
+                    $('#DivErrorView').delay(2000).slideUp();
+                    $("#Number").val('');
+                    $("#Name").val('');
+                    return;
+                }
+            },
+            error: function (xhr, error, status) {
+                alert("error--")
+            }
+        })
+    }
+    function showUploadModal(ContactIds) {
+        contactId = ContactIds
+        $("#UploadPhototModal").modal('show');
+    }
+    function UploadImage() {
+        debugger;
+        var uploadedfile = $("#formFile")[0].files[0];
+
+        var formData = new FormData();
+        formData.append('formFile', uploadedfile);
+        formData.append('ContactId', contactId);
+
+        $.ajax({
+            url: '@Url.Action("UploadImage", "Contact")',
+            type: 'POST',
+            data: formData,
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response) {
+                    alert("Image uploaded successfully");
+                    $("#UploadPhototModal").modal('hide');
+                    displayImage();
+                }
+                else {
+                    alert("unable to upload image");
+                }
+            },
+            error: function (xhr, status, error) {
+                alert("error--");
+            }
+        })
+    }
+    function displayImage() {
+        $.ajax({
+            url: '@Url.Action("Imagefetched", "Contact")',
+            type:'GET',
+            data: {
+                ContactId: contactId
+            },
+            success: function (response) {
+                if (response) {
+                    alert("fetched successfully");
+                }
+                else {
+                    alert("unable to fetch data");
+                }
+            },
+            error: function (xhr, error, status) {
+                alert("error--");
             }
         })
     }
